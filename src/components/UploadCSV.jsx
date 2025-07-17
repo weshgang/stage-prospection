@@ -1,148 +1,98 @@
-// src/components/UploadCSV.jsx
-import { useState } from 'react';
-import Papa from 'papaparse';
+import { useState, useEffect } from 'react';
+import { supabase } from '../lib/supabase';
+import { deriveStatus } from '../utils/followup';
 
-export default function UploadCSV({ onData }) {
-  const [mode, setMode] = useState('csv'); // 'csv' | 'manual'
+export default function Dashboard() {
+  const [contacts, setContacts] = useState([]);
+  const [form, setForm] = useState({ recruiter: '', position: '', firm: '', email: '' });
 
-  /* ---------- CSV upload ---------- */
-  const handleFile = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    Papa.parse(file, {
-      header: true,
-      skipEmptyLines: true,
-      complete: (res) => onData(res.data),
-      error: (err) => console.error(err),
-    });
+  const user = supabase.auth.user(); // or getSession()
+  if (!user) return <p>Please log in.</p>;
+
+  // Load user’s contacts
+  useEffect(() => {
+    (async () => {
+      const { data } = await supabase
+        .from('contacts')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+      setContacts(data || []);
+    })();
+  }, []);
+
+  // Create or update row
+  const handleSubmit = async () => {
+    if (!form.email) return;
+    const { data } = await supabase.from('contacts').insert([
+      { ...form, user_id: user.id, last_sent_at: new Date().toISOString() }
+    ]);
+    setContacts([data[0], ...contacts]);
+    setForm({ recruiter: '', position: '', firm: '', email: '' });
   };
 
-  /* ---------- Manual table ---------- */
-  const emptyRow = { recruiter: '', position: '', firm: '', email: '' };
-  const [rows, setRows] = useState([{ ...emptyRow, id: Date.now() }]);
+  const sendEmail = async (id, email) => {
+    const now = new Date().toISOString();
+    await supabase.from('contacts').update({ last_sent_at: now }).eq('id', id);
+    setContacts(contacts.map(c => c.id === id ? { ...c, last_sent_at: now } : c));
+  };
 
-  const handleChange = (id, field, value) =>
-    setRows((r) => r.map((row) => (row.id === id ? { ...row, [field]: value } : row)));
-
-  const addRow = () => setRows((r) => [...r, { ...emptyRow, id: Date.now() }]);
-
-  const removeRow = (id) =>
-    setRows((r) => r.filter((row) => row.id !== id));
-
-  const saveManual = () => {
-    onData(rows.filter((r) => r.recruiter && r.email)); // only valid rows
-    setRows([{ ...emptyRow, id: Date.now() }]); // reset
+  const markReplied = async (id) => {
+    await supabase.from('contacts').update({ replied: true }).eq('id', id);
+    setContacts(contacts.map(c => c.id === id ? { ...c, replied: true } : c));
   };
 
   return (
-    <div className="space-y-6">
-      {/* Toggle */}
-      <div className="flex items-center space-x-4 text-sm font-medium">
-        <button
-          onClick={() => setMode('csv')}
-          className={`px-3 py-1 rounded ${mode === 'csv' ? 'bg-blue-100 text-blue-700' : 'text-gray-500'}`}
-        >
-          📁 Importer CSV
-        </button>
-        <button
-          onClick={() => setMode('manual')}
-          className={`px-3 py-1 rounded ${mode === 'manual' ? 'bg-blue-100 text-blue-700' : 'text-gray-500'}`}
-        >
-          ✏️ Créer manuellement
-        </button>
+    <div className="max-w-4xl mx-auto p-6 space-y-6">
+      {/* ADD FORM */}
+      <div className="bg-white p-4 rounded shadow grid grid-cols-2 gap-3">
+        <input placeholder="Recruiter" value={form.recruiter} onChange={e => setForm({ ...form, recruiter: e.target.value })} />
+        <input placeholder="Position" value={form.position} onChange={e => setForm({ ...form, position: e.target.value })} />
+        <input placeholder="Firm" value={form.firm} onChange={e => setForm({ ...form, firm: e.target.value })} />
+        <input placeholder="Email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
+        <button onClick={handleSubmit} className="col-span-2 bg-blue-600 text-white rounded px-3 py-1">Add & Send</button>
       </div>
 
-      {/* CSV */}
-      {mode === 'csv' && (
-        <label className="block w-full p-4 border-2 border-dashed border-gray-300 rounded-lg text-center cursor-pointer hover:border-blue-400">
-          <input type="file" accept=".csv" onChange={handleFile} className="hidden" />
-          <span className="text-blue-600 font-medium">Choisis un fichier CSV</span>
-        </label>
-      )}
-
-      {/* Manual table */}
-      {mode === 'manual' && (
-        <>
-          <div className="bg-white rounded-lg shadow overflow-hidden">
-            <table className="w-full text-sm">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-3 py-2">Recruteur</th>
-                  <th className="px-3 py-2">Poste</th>
-                  <th className="px-3 py-2">Entreprise</th>
-                  <th className="px-3 py-2">Email</th>
-                  <th className="px-3 py-2"></th>
-                </tr>
-              </thead>
-              <tbody>
-                {rows.map((row) => (
-                  <tr key={row.id} className="border-t">
-                    <td className="p-2">
-                      <input
-                        type="text"
-                        value={row.recruiter}
-                        onChange={(e) => handleChange(row.id, 'recruiter', e.target.value)}
-                        className="w-full px-2 py-1 border rounded"
-                        placeholder="Nom"
-                      />
-                    </td>
-                    <td className="p-2">
-                      <input
-                        type="text"
-                        value={row.position}
-                        onChange={(e) => handleChange(row.id, 'position', e.target.value)}
-                        className="w-full px-2 py-1 border rounded"
-                        placeholder="Poste"
-                      />
-                    </td>
-                    <td className="p-2">
-                      <input
-                        type="text"
-                        value={row.firm}
-                        onChange={(e) => handleChange(row.id, 'firm', e.target.value)}
-                        className="w-full px-2 py-1 border rounded"
-                        placeholder="Entreprise"
-                      />
-                    </td>
-                    <td className="p-2">
-                      <input
-                        type="email"
-                        value={row.email}
-                        onChange={(e) => handleChange(row.id, 'email', e.target.value)}
-                        className="w-full px-2 py-1 border rounded"
-                        placeholder="Email"
-                      />
-                    </td>
-                    <td className="p-2">
-                      <button
-                        onClick={() => removeRow(row.id)}
-                        className="text-red-500 hover:text-red-700"
-                      >
-                        ✕
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div className="flex items-center space-x-3">
-            <button
-              onClick={addRow}
-              className="text-sm bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded"
-            >
-              + Ajouter une ligne
-            </button>
-            <button
-              onClick={saveManual}
-              className="text-sm bg-blue-600 text-white px-4 py-1 rounded shadow hover:bg-blue-700"
-            >
-              Enregistrer
-            </button>
-          </div>
-        </>
-      )}
+      {/* TABLE */}
+      <table className="w-full bg-white rounded shadow text-sm">
+        <thead className="bg-gray-50">
+          <tr>
+            <th>Recruiter</th>
+            <th>Position</th>
+            <th>Firm</th>
+            <th>Email</th>
+            <th>Last Sent</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {contacts.map(c => {
+            const s = deriveStatus(c.last_sent_at, c.replied);
+            return (
+              <tr key={c.id} className="border-t">
+                <td>{c.recruiter}</td>
+                <td>{c.position}</td>
+                <td>{c.firm}</td>
+                <td>{c.email}</td>
+                <td>{c.last_sent_at ? new Date(c.last_sent_at).toLocaleDateString() : '-'}</td>
+                <td>
+                  <span className={`px-2 py-1 rounded text-xs text-white ${s.color === 'red' ? 'bg-red-500' : s.color === 'green' ? 'bg-green-500' : 'bg-gray-400'}`}>
+                    {s.label}
+                  </span>
+                </td>
+                <td>
+                  {!c.replied && (
+                    <>
+                      <button onClick={() => sendEmail(c.id, c.email)} className="text-xs mr-1">Send</button>
+                      <button onClick={() => markReplied(c.id)} className="text-xs">Replied</button>
+                    </>
+                  )}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
     </div>
   );
 }
