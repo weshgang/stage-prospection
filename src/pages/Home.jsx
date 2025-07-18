@@ -15,7 +15,7 @@ export const SignOutButton = () => {
     </button>
   );
 };
-export default function Home() {
+export function Home() {
   return (
     <div className="min-h-screen bg-[#f7f8fa] text-[#1d1d1d] flex flex-col items-center">
       <div className="w-full max-w-3xl text-center py-16 px-6">
@@ -26,12 +26,8 @@ export default function Home() {
           Crée ta campagne LinkedIn + email pour contacter les bons recruteurs<br />
           avec des messages personnalisés. Simple, rapide, efficace.
         </p>
-
         <div className="mt-8 space-x-4">
-          <Link
-            to="/dashboard"
-            className="bg-white text-[#2e5bff] font-bold py-3 px-6 rounded-lg border-2 border-[#2e5bff] hover:bg-[#f0f2ff] shadow"
-          >
+          <Link to="/dashboard" className="bg-white text-[#2e5bff] font-bold py-3 px-6 rounded-lg border-2 border-[#2e5bff] hover:bg-[#f0f2ff] shadow">
             Démarrer gratuitement
           </Link>
           <Link to="/login" className="text-[#2e5bff] underline">
@@ -39,7 +35,6 @@ export default function Home() {
           </Link>
         </div>
       </div>
-
       <div className="bg-white w-full max-w-3xl py-10 px-6 border-t border-gray-200 text-left">
         <h2 className="text-xl font-semibold mb-2">Fonctionnalités principales :</h2>
         <ul className="list-disc list-inside text-gray-700">

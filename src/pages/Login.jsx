@@ -6,33 +6,34 @@ export default function Login() {
   const [email, setEmail]     = useState('');
   const [password, setPass]   = useState('');
   const [isSignUp, setSignUp] = useState(false);
+  const [info, setInfo]       = useState('');     // message d'info animé
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setInfo('');
 
-    // Auth Supabase simple — erreurs remontées en alert
     try {
       if (isSignUp) {
         const { error } = await supabase.auth.signUp({ email, password: password });
         if (error) throw error;
+        // Affiche un message plutôt que d'attendre la redirection
+        setInfo('📧 Un e‑mail de confirmation vient d’être envoyé. Vérifie ta boîte de réception !');
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
+        setInfo('✅ Connexion réussie ! Redirection…');
+        setTimeout(() => navigate('/dashboard'), 1000);
       }
-      navigate('/dashboard');
     } catch (err) {
-      alert(err.message);
+      setInfo(`❌ ${err.message}`);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <form
-        onSubmit={handleSubmit}
-        className="w-96 rounded shadow bg-white p-8"
-      >
-        <h2 className="text-2xl font-bold mb-6">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+      <form onSubmit={handleSubmit} className="w-full max-w-md rounded shadow bg-white p-8 animate-fade-in">
+        <h2 className="text-2xl font-bold mb-6 text-center">
           {isSignUp ? 'Sign Up' : 'Log In'}
         </h2>
 
@@ -54,13 +55,9 @@ export default function Login() {
           className="w-full border rounded px-3 py-2 mb-6"
         />
 
-        {/* BOUTON TOUJOURS BLEU */}
         <button
           type="submit"
-          className="w-full py-2 rounded font-semibold text-white
-                     bg-blue-600 hover:bg-blue-700
-                     transition focus:outline-none focus:ring-2
-                     focus:ring-blue-400"
+          className="w-full py-2 rounded font-semibold text-white bg-blue-600 hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-blue-400"
         >
           {isSignUp ? 'Create account' : 'Log in'}
         </button>
@@ -70,9 +67,15 @@ export default function Login() {
           onClick={() => setSignUp(!isSignUp)}
           className="w-full mt-3 text-sm text-blue-600 underline"
         >
-          {isSignUp ? 'Already have an account? Log in'
-                     : 'Need an account? Sign up'}
+          {isSignUp ? 'Already have an account? Log in' : 'Need an account? Sign up'}
         </button>
+
+        {/* Message d’information animé */}
+        {info && (
+          <div className="mt-4 p-3 rounded bg-blue-50 text-blue-700 border border-blue-200 animate-pulse">
+            {info}
+          </div>
+        )}
       </form>
     </div>
   );
