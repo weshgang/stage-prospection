@@ -48,13 +48,13 @@ export default function Login() {
 
         <button
           type="submit"
-          onClick={handleSubmit}          // ta fonction d’envoi
-          className={`w-full py-2 rounded text-white font-semibold
-              ${loading
-                ? 'bg-blue-600 opacity-50 pointer-events-none'
-                : 'bg-blue-600 hover:bg-blue-700'}`}
-      >
-      {loading ? 'Loading…' : (isSignUp ? 'Create account' : 'Log in')}
+          disabled={loading}
+          className="w-full py-2 rounded text-white font-semibold
+             bg-blue-600 hover:bg-blue-700
+             disabled:opacity-50 disabled:bg-blue-600
+             disabled:cursor-not-allowed"
+        >
+          {loading ? 'Loading…' : (isSignUp ? 'Create account' : 'Log in')}
         </button>
 
         <button
