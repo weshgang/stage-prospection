@@ -1,44 +1,39 @@
 import { useState } from 'react';
-import { Navigate } from 'react-router-dom';
-import UploadCSV from '../components/UploadCSV';
-import { useAuth } from '../contexts/AuthContext';
+import { Navigate }  from 'react-router-dom';
+import UploadCSV     from '../components/UploadCSV';
+import { useAuth }   from '../contexts/AuthContext';
 
 export default function Dashboard() {
-  // 1️⃣ Vérifie l’authentification
+  /* Auth */
   const { user, loading } = useAuth();
-  if (loading) return null;                     // Spinner éventuel
+  if (loading) return null;                       // spinner éventuel
   if (!user)   return <Navigate to="/login" replace />;
 
-  // 2️⃣ État local pour les campagnes importées
+  /* État local */
   const [campaigns, setCampaigns] = useState([]);
 
-  // 3️⃣ Callback déclenché par UploadCSV
+  /* CSV handler */
   const handleCSVData = (rows) => {
-    const newCampaigns = rows.map((r, index) => ({
-      id: Date.now() + index,   // ID temporaire
+    const newRows = rows.map((r, idx) => ({
+      id: Date.now() + idx,
       ...r,
-      sentAt: '-',
       status: 'Imported',
     }));
-    setCampaigns((prev) => [...prev, ...newCampaigns]);
+    setCampaigns(prev => [...newRows, ...prev]);
   };
 
-  /* 4️⃣ Rendu */
+  /* UI */
   return (
     <div className="min-h-screen bg-[#f7f8fa]">
-      {/* En-tête */}
       <header className="bg-white shadow-sm">
         <div className="max-w-6xl mx-auto px-4 py-4">
           <h1 className="text-2xl font-bold">Tableau de bord</h1>
         </div>
       </header>
 
-      {/* Contenu */}
       <main className="max-w-6xl mx-auto px-4 py-8 space-y-8">
-        {/* Importateur CSV */}
         <UploadCSV onData={handleCSVData} />
 
-        {/* Tableau de suivi */}
         {campaigns.length > 0 && (
           <div className="bg-white rounded-lg shadow overflow-x-auto">
             <table className="w-full text-sm text-left">
@@ -52,7 +47,7 @@ export default function Dashboard() {
                 </tr>
               </thead>
               <tbody>
-                {campaigns.map((c) => (
+                {campaigns.map(c => (
                   <tr key={c.id} className="border-t">
                     <td className="px-4 py-2">{c.recruiter}</td>
                     <td className="px-4 py-2">{c.position}</td>
