@@ -1,3 +1,20 @@
+import { supabase } from '../lib/supabase';
+import { useNavigate } from 'react-router-dom';
+
+export const SignOutButton = () => {
+  const navigate = useNavigate();
+  return (
+    <button
+      onClick={async () => {
+        await supabase.auth.signOut();
+        navigate('/login');
+      }}
+      className="text-sm text-red-600 underline"
+    >
+      Sign Out
+    </button>
+  );
+};
 export default function Home() {
   return (
     <div className="min-h-screen bg-[#f7f8fa] text-[#1d1d1d] flex flex-col items-center">

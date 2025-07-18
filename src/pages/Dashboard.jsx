@@ -1,6 +1,24 @@
 import { useState } from 'react';
 import UploadCSV from '../components/UploadCSV';
+import { supabase } from '../lib/supabase';
+import { useNavigate } from 'react-router-dom';
 
+export const SignOutButton = () => {
+  const navigate = useNavigate();
+  return (
+    <button
+      onClick={async () => {
+        await supabase.auth.signOut();
+        navigate('/login');
+      }}
+      className="text-sm text-red-600 underline"
+    >
+      Sign Out
+    </button>
+  );
+};
+const user = useAuth();
+if (!user) return <p>Loading…</p>;
 export default function Dashboard() {
   // 1️⃣ Local state that will later come from MongoDB
   const [campaigns, setCampaigns] = useState([]);

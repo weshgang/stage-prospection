@@ -1,29 +1,67 @@
-// src/pages/Login.jsx
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import { supabase } from '../lib/supabase';
+import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
-  const nav = useNavigate();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) nav('/dashboard');
-    });
-  }, [nav]);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
 
-  const handleGitHub = async () => {
-    await supabase.auth.signInWithOAuth({ provider: 'github' });
+    const { error } = isSignUp
+      ? await supabase.auth.signUp({ email, password })
+      : await supabase.auth.signInWithPassword({ email, password });
+
+    setLoading(false);
+    if (error) return alert(error.message);
+
+    navigate('/dashboard');
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <button
-        onClick={handleGitHub}
-        className="bg-black text-white px-6 py-3 rounded font-semibold"
-      >
-        Sign in with GitHub
-      </button>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <form onSubmit={handleSubmit} className="bg-white p-8 rounded shadow-md w-96">
+        <h2 className="text-2xl font-bold mb-6">{isSignUp ? 'Sign Up' : 'Log In'}</h2>
+
+        <label className="block mb-2">Email</label>
+        <input
+          type="email"
+          required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full border px-3 py-2 mb-4 rounded"
+        />
+
+        <label className="block mb-2">Password</label>
+        <input
+          type="password"
+          required
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full border px-3 py-2 mb-4 rounded"
+        />
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+        >
+          {loading ? 'Loading…' : (isSignUp ? 'Create account' : 'Log in')}
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setIsSignUp(!isSignUp)}
+          className="w-full mt-2 text-sm text-blue-600 underline"
+        >
+          {isSignUp ? 'Already have an account? Log in' : 'Need an account? Sign up'}
+        </button>
+      </form>
     </div>
   );
 }
