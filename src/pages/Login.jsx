@@ -3,30 +3,38 @@ import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [isSignUp, setIsSignUp] = useState(false);
+  const [email, setEmail]     = useState('');
+  const [password, setPass]   = useState('');
+  const [isSignUp, setSignUp] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
 
-    const { error } = isSignUp
-      ? await supabase.auth.signUp({ email, password })
-      : await supabase.auth.signInWithPassword({ email, password });
-
-    setLoading(false);
-    if (error) return alert(error.message);
-
-    navigate('/dashboard');
+    // Auth Supabase simple — erreurs remontées en alert
+    try {
+      if (isSignUp) {
+        const { error } = await supabase.auth.signUp({ email, password: password });
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+      }
+      navigate('/dashboard');
+    } catch (err) {
+      alert(err.message);
+    }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <form onSubmit={handleSubmit} className="bg-white p-8 rounded shadow-md w-96">
-        <h2 className="text-2xl font-bold mb-6">{isSignUp ? 'Sign Up' : 'Log In'}</h2>
+    <div className="min-h-screen flex items-center justify-center">
+      <form
+        onSubmit={handleSubmit}
+        className="w-96 rounded shadow bg-white p-8"
+      >
+        <h2 className="text-2xl font-bold mb-6">
+          {isSignUp ? 'Sign Up' : 'Log In'}
+        </h2>
 
         <label className="block mb-2">Email</label>
         <input
@@ -34,7 +42,7 @@ export default function Login() {
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full border px-3 py-2 mb-4 rounded"
+          className="w-full border rounded px-3 py-2 mb-4"
         />
 
         <label className="block mb-2">Password</label>
@@ -42,26 +50,28 @@ export default function Login() {
           type="password"
           required
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full border px-3 py-2 mb-4 rounded"
+          onChange={(e) => setPass(e.target.value)}
+          className="w-full border rounded px-3 py-2 mb-6"
         />
 
-      <button
-      type="submit"
-      onClick={handleSubmit}          // ta fonction d’envoi
-      className="w-full py-2 rounded font-semibold text-white
-             bg-blue-600 hover:bg-blue-700
-             transition focus:outline-none focus:ring-2 focus:ring-blue-400">
-      {isSignUp ? 'Create account' : 'Log in'}
-      </button>
-
+        {/* BOUTON TOUJOURS BLEU */}
+        <button
+          type="submit"
+          className="w-full py-2 rounded font-semibold text-white
+                     bg-blue-600 hover:bg-blue-700
+                     transition focus:outline-none focus:ring-2
+                     focus:ring-blue-400"
+        >
+          {isSignUp ? 'Create account' : 'Log in'}
+        </button>
 
         <button
           type="button"
-          onClick={() => setIsSignUp(!isSignUp)}
-          className="w-full mt-2 text-sm text-blue-600 underline"
+          onClick={() => setSignUp(!isSignUp)}
+          className="w-full mt-3 text-sm text-blue-600 underline"
         >
-          {isSignUp ? 'Already have an account? Log in' : 'Need an account? Sign up'}
+          {isSignUp ? 'Already have an account? Log in'
+                     : 'Need an account? Sign up'}
         </button>
       </form>
     </div>
