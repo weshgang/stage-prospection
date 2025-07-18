@@ -4,6 +4,11 @@ export default {
     './index.html',
     './src/**/*.{js,jsx,ts,tsx}',
   ],
-  theme: { extend: {} },
+  theme: { extend: {keyframes: {
+      fadeIn: { from: { opacity: 0 }, to: { opacity: 1 } },
+    },
+    animation: {
+      'fade-in': 'fadeIn .5s ease-in-out',
+    },} },
   plugins: [],
 };
