@@ -7,7 +7,7 @@ import Navbar from './components/Navbar';
 
 function PrivateRoute({ children }) {
   const { user, loading } = useAuth();
-  if (loading) return null;          // Spinner si tu veux
+  if (loading) return null;           // ou un spinner
   return user ? children : <Navigate to="/login" replace />;
 }
 
@@ -18,8 +18,6 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
-
-        {/* protégé */}
         <Route
           path="/dashboard"
           element={
@@ -28,8 +26,6 @@ export default function App() {
             </PrivateRoute>
           }
         />
-
-        {/* fallback */}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </AuthProvider>

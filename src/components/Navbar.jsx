@@ -6,28 +6,18 @@ export default function Navbar() {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    navigate('/login');
-  };
-
   return (
     <nav className="flex justify-between items-center px-6 py-4 bg-white shadow">
       <Link to="/" className="font-bold text-xl">StageProspect</Link>
 
       {user ? (
         <div className="space-x-4">
-          <Link to="/dashboard" className="text-blue-600 underline">
-            Dashboard
-          </Link>
-          <button onClick={handleSignOut} className="text-red-600 underline">
-            Sign out
-          </button>
+          <Link to="/dashboard" className="text-blue-600 underline">Dashboard</Link>
+          <button onClick={async () => { await supabase.auth.signOut(); navigate('/login'); }}
+                  className="text-red-600 underline">Sign out</button>
         </div>
       ) : (
-        <Link to="/login" className="text-blue-600 underline">
-          Log in
-        </Link>
+        <Link to="/login" className="text-blue-600 underline">Log in</Link>
       )}
     </nav>
   );

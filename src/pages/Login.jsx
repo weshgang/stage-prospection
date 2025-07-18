@@ -1,13 +1,19 @@
 import { useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function Login() {
-  const [email, setEmail]     = useState('');
-  const [password, setPass]   = useState('');
-  const [isSignUp, setSignUp] = useState(false);
-  const [info, setInfo]       = useState('');     // message d'info animé
+  const { user } = useAuth();
   const navigate = useNavigate();
+
+  // redirige si déjà connecté
+  if (user) return <Navigate to="/dashboard" replace />;
+
+  const [email, setEmail] = useState('');
+  const [password, setPass] = useState('');
+  const [isSignUp, setSignUp] = useState(false);
+  const [info, setInfo] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -15,23 +21,21 @@ export default function Login() {
 
     try {
       if (isSignUp) {
-      // INSCRIPTION
-          const { error } = await supabase.auth.signUp({ email, password });
-          if (error) throw error;
-
-      setInfo('📧 Un e-mail de confirmation vient d’être envoyé !');
-    } else {
-      // CONNEXION
-          const { error } = await supabase.auth.signInWithPassword({ email, password });
-          if (error) throw error;
-
-          setInfo('✅ Connexion réussie ! Redirection…');
-          navigate('/dashboard');         // redirige immédiatement
-    }
-  } catch (err) {
+        const { error } = await supabase.auth.signUp({ email, password: password });
+        if (error) throw error;
+        setInfo('📧 E-mail de confirmation envoyé !');
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        // pas besoin de navigate ici : AuthContext réagira et <Navigate/> ci-dessus fera le boulot
+      }
+    } catch (err) {
       setInfo(`❌ ${err.message}`);
     }
   };
+
+  /* … garde ton JSX du formulaire, sans navigate('/dashboard') … */
+}
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
