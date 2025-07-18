@@ -28,12 +28,12 @@ export default function Home() {
         </p>
 
         <div className="mt-8 space-x-4">
-          <Link to="/dashboard" className="bg-white text-[#2e5bff] font-bold py-3 px-6 rounded-lg border-2 border-[#2e5bff] hover:bg-[#f0f2ff] shadow">
+          <a href="/dashboard" className="bg-white text-[#2e5bff] font-bold py-3 px-6 rounded-lg border-2 border-[#2e5bff] hover:bg-[#f0f2ff] shadow">
             Démarrer gratuitement
-          </Link>
-          <Link to="/login" className="text-[#2e5bff] underline">
+          </a>
+          <a href="/login" className="text-[#2e5bff] underline">
             J’ai déjà un compte
-          </Link>
+          </a>
         </div>
       </div>
 
