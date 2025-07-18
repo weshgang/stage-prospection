@@ -15,7 +15,7 @@ export const SignOutButton = () => {
     </button>
   );
 };
-export function Home() {
+export default function Home() {
   return (
     <div className="min-h-screen bg-[#f7f8fa] text-[#1d1d1d] flex flex-col items-center">
       <div className="w-full max-w-3xl text-center py-16 px-6">
