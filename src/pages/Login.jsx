@@ -15,17 +15,20 @@ export default function Login() {
 
     try {
       if (isSignUp) {
-        const { error } = await supabase.auth.signUp({ email, password: password });
-        if (error) throw error;
-        // Affiche un message plutôt que d'attendre la redirection
-        setInfo('📧 Un e‑mail de confirmation vient d’être envoyé. Vérifie ta boîte de réception !');
-      } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-        setInfo('✅ Connexion réussie ! Redirection…');
-        setTimeout(() => navigate('/dashboard'), 1000);
-      }
-    } catch (err) {
+      // INSCRIPTION
+          const { error } = await supabase.auth.signUp({ email, password });
+          if (error) throw error;
+
+      setInfo('📧 Un e-mail de confirmation vient d’être envoyé !');
+    } else {
+      // CONNEXION
+          const { error } = await supabase.auth.signInWithPassword({ email, password });
+          if (error) throw error;
+
+          setInfo('✅ Connexion réussie ! Redirection…');
+          navigate('/dashboard');         // redirige immédiatement
+    }
+  } catch (err) {
       setInfo(`❌ ${err.message}`);
     }
   };
