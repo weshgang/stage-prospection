@@ -46,17 +46,16 @@ export default function Login() {
           className="w-full border px-3 py-2 mb-4 rounded"
         />
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full py-2 rounded text-white font-semibold
-             bg-blue-600 hover:bg-blue-700
-             disabled:opacity-50 disabled:bg-blue-600
-             disabled:cursor-not-allowed"
-        >
-          {loading ? 'Loading…' : (isSignUp ? 'Create account' : 'Log in')}
-        </button>
-
+      <button
+        type="submit"
+        onClick={handleSubmit}
+        className={`w-full py-2 rounded font-semibold text-white transition
+          ${loading
+            ? 'bg-blue-600 opacity-50 cursor-not-allowed pointer-events-none'
+            : 'bg-blue-600 hover:bg-blue-700'}`}
+      >
+      {loading ? 'Loading…' : (isSignUp ? 'Create account' : 'Log in')}
+      </button>
         <button
           type="button"
           onClick={() => setIsSignUp(!isSignUp)}
