@@ -6,7 +6,7 @@ import AuthCallback from './pages/AuthCallback';
 import Navbar from './components/Navbar';
 import AuthGate from './components/AuthGate';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
-
+import Account from './pages/Account';
 function PrivateRoute({ children }) {
   const { user, loading } = useAuth();
   if (loading) return null;
@@ -21,6 +21,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/account" element={<Account />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
           <Route
             path="/dashboard"

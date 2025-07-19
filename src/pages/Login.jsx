@@ -1,5 +1,5 @@
 // src/pages/Login.jsx
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { useNavigate, Navigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -18,6 +18,11 @@ export default function Login() {
   const [password, setPass] = useState('');
   const [isSignUp, setSignUp] = useState(false);
   const [info, setInfo] = useState('');
+  useEffect(() => {
+    if (q.get('signup') === '1') {
+      setSignUp(true);
+    }
+  }, [q]);
 
   /* 3️⃣ Soumission */
   const handleSubmit = async (e) => {

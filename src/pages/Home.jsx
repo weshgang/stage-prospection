@@ -20,7 +20,7 @@ export default function Home() {
     return (
       <>
         <Link
-          to="/dashboard"
+          to="/login?signup=1"
           className="bg-white text-[#2e5bff] font-bold py-3 px-6 rounded-lg border-2 border-[#2e5bff] hover:bg-[#f0f2ff] shadow"
         >
           Démarrer gratuitement
