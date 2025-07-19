@@ -7,7 +7,7 @@ import Navbar from './components/Navbar';
 
 function PrivateRoute({ children }) {
   const { user, loading } = useAuth();
-  if (loading) return null;           // ou un spinner
+  if (loading) return null; // ou un spinner
   return user ? children : <Navigate to="/login" replace />;
 }
 

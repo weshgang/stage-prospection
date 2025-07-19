@@ -5,16 +5,16 @@ import { useAuth } from '../contexts/AuthContext';
 
 export default function Login() {
   const { user } = useAuth();
-  const navigate  = useNavigate();
+  const navigate = useNavigate();
 
   /* 1️⃣ Déjà connecté ? -> dashboard */
   if (user) return <Navigate to="/dashboard" replace />;
 
   /* 2️⃣ États locaux */
-  const [email,     setEmail]   = useState('');
-  const [password,  setPass]    = useState('');
-  const [isSignUp,  setSignUp]  = useState(false);
-  const [info,      setInfo]    = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPass] = useState('');
+  const [isSignUp, setSignUp] = useState(false);
+  const [info, setInfo] = useState('');
 
   /* 3️⃣ Soumission */
   const handleSubmit = async (e) => {
@@ -40,9 +40,7 @@ export default function Login() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
       <form onSubmit={handleSubmit} className="w-full max-w-md rounded shadow bg-white p-8">
-        <h2 className="text-2xl font-bold mb-6 text-center">
-          {isSignUp ? 'Sign Up' : 'Log In'}
-        </h2>
+        <h2 className="text-2xl font-bold mb-6 text-center">{isSignUp ? 'Sign Up' : 'Log In'}</h2>
 
         <label className="block mb-2">Email</label>
         <input
@@ -76,9 +74,7 @@ export default function Login() {
           onClick={() => setSignUp(!isSignUp)}
           className="w-full mt-3 text-sm text-blue-600 underline"
         >
-          {isSignUp
-            ? 'Already have an account? Log in'
-            : 'Need an account? Sign up'}
+          {isSignUp ? 'Already have an account? Log in' : 'Need an account? Sign up'}
         </button>
 
         {info && (

@@ -23,11 +23,15 @@ export default function Home() {
           Être un <span className="text-[#2e5bff]">shark</span> n'a jamais été aussi simple
         </h1>
         <p className="text-lg md:text-xl max-w-2xl mx-auto text-gray-600">
-          Crée ta campagne LinkedIn + email pour contacter les bons recruteurs<br />
+          Crée ta campagne LinkedIn + email pour contacter les bons recruteurs
+          <br />
           avec des messages personnalisés. Simple, rapide, efficace.
         </p>
         <div className="mt-8 space-x-4">
-          <Link to="/dashboard" className="bg-white text-[#2e5bff] font-bold py-3 px-6 rounded-lg border-2 border-[#2e5bff] hover:bg-[#f0f2ff] shadow">
+          <Link
+            to="/dashboard"
+            className="bg-white text-[#2e5bff] font-bold py-3 px-6 rounded-lg border-2 border-[#2e5bff] hover:bg-[#f0f2ff] shadow"
+          >
             Démarrer gratuitement
           </Link>
           <Link to="/login" className="text-[#2e5bff] underline">
@@ -47,4 +51,3 @@ export default function Home() {
     </div>
   );
 }
-

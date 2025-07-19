@@ -1,13 +1,13 @@
 import { useState } from 'react';
-import { Navigate }  from 'react-router-dom';
-import UploadCSV     from '../components/UploadCSV';
-import { useAuth }   from '../contexts/AuthContext';
+import { Navigate } from 'react-router-dom';
+import UploadCSV from '../components/UploadCSV';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function Dashboard() {
   /* Auth */
   const { user, loading } = useAuth();
-  if (loading) return null;                       // spinner éventuel
-  if (!user)   return <Navigate to="/login" replace />;
+  if (loading) return null; // spinner éventuel
+  if (!user) return <Navigate to="/login" replace />;
 
   /* État local */
   const [campaigns, setCampaigns] = useState([]);
@@ -19,7 +19,7 @@ export default function Dashboard() {
       ...r,
       status: 'Imported',
     }));
-    setCampaigns(prev => [...newRows, ...prev]);
+    setCampaigns((prev) => [...newRows, ...prev]);
   };
 
   /* UI */
@@ -47,16 +47,14 @@ export default function Dashboard() {
                 </tr>
               </thead>
               <tbody>
-                {campaigns.map(c => (
+                {campaigns.map((c) => (
                   <tr key={c.id} className="border-t">
                     <td className="px-4 py-2">{c.recruiter}</td>
                     <td className="px-4 py-2">{c.position}</td>
                     <td className="px-4 py-2">{c.firm}</td>
                     <td className="px-4 py-2">{c.email}</td>
                     <td className="px-4 py-2">
-                      <span className="text-xs bg-gray-100 px-2 py-1 rounded-full">
-                        {c.status}
-                      </span>
+                      <span className="text-xs bg-gray-100 px-2 py-1 rounded-full">{c.status}</span>
                     </td>
                   </tr>
                 ))}

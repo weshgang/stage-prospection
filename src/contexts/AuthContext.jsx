@@ -5,7 +5,7 @@ import { supabase } from '../lib/supabase';
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [user,    setUser]    = useState(null);
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   // 1️⃣ Récupère la session au premier montage
@@ -24,11 +24,7 @@ export function AuthProvider({ children }) {
     return () => listener.subscription.unsubscribe();
   }, []);
 
-  return (
-    <AuthContext.Provider value={{ user, loading }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={{ user, loading }}>{children}</AuthContext.Provider>;
 }
 
 export const useAuth = () => useContext(AuthContext);
