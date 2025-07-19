@@ -1,3 +1,4 @@
+// src/contexts/AuthContext.jsx
 import { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 
@@ -8,20 +9,19 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // 1️⃣ Récupère la session actuelle
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log('[AuthContext] Initial session :', session);
       setUser(session?.user ?? null);
       setLoading(false);
     });
 
-    // 2️⃣ Abonnement aux changements
-    const { data: subscription } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: subscription } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log(`[AuthContext] Auth state changed : ${event}`, session);
       setUser(session?.user ?? null);
     });
 
-    // 3️⃣ Nettoyage correct
     return () => {
-      subscription?.unsubscribe(); // ✅ sécurise bien l'arrêt
+      subscription?.subscription?.unsubscribe();
     };
   }, []);
 

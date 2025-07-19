@@ -5,8 +5,6 @@ import { useAuth } from '../contexts/AuthContext';
 
 export default function Login() {
   const { user, loading } = useAuth();
-  const navigate = useNavigate();
-
   /* 1️⃣ Déjà connecté ? -> dashboard */
   if (!loading && user) return <Navigate to="/dashboard" replace />;
 
