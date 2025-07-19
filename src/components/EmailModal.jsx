@@ -4,42 +4,57 @@ export default function EmailModal({ contact, profile, onClose }) {
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-    if (contact && profile) {
+    const fetchTemplate = async () => {
+      if (!contact || !profile) return;
+
+      const { data: templates } = await supabase
+        .from('email_templates')
+        .select('*')
+        .eq('user_id', profile.id)
+        .eq('industry', contact.industry)
+        .order('created_at', { ascending: false })
+        .limit(1);
+
       const recruiterFirstName = contact.recruiter_name?.split(' ')[0] || '';
       const userFullName = `${profile.prenom ?? ''} ${profile.nom ?? ''}`.trim();
-      const emailTemplate = `Bonjour ${recruiterFirstName},
 
-Je me permets de revenir vers vous concernant ma candidature pour un stage en ${
-        contact.industry ?? 'finance'
-      } au poste de ${contact.position ?? '...'}. Je suis actuellement étudiant à ${
-        profile.ecole ?? 'votre école'
-      } et je serais ravi d’échanger à ce sujet si vous êtes disponible.
+      let finalMessage;
 
-Bien à vous,
+      if (templates?.length) {
+        const tpl = templates[0];
+        finalMessage = tpl.body
+          .replace('{{prenom}}', recruiterFirstName)
+          .replace('{{email}}', profile.email)
+          .replace('{{poste}}', contact.position ?? '')
+          .replace('{{ecole}}', profile.ecole ?? '')
+          .replace('{{nom}}', userFullName);
+      } else {
+        finalMessage = `Bonjour ${recruiterFirstName}, ... (ancien template)`;
+      }
 
-${userFullName}
-${profile.ecole}
-${profile.email}
-`;
-      setMessage(emailTemplate);
-    }
+      setMessage(finalMessage);
+    };
+
+    fetchTemplate();
   }, [contact, profile]);
-  const sendEmailToContact = async () => {
-  try {
-    await navigator.clipboard.writeText(message);
-    alert("📋 Le message a été copié dans le presse-papier ! Ouvre Gmail et colle-le.");
-    onClose();
-  } catch (err) {
-    console.error('Erreur copie email :', err);
-    alert("❌ Erreur lors de la copie de l’email");
-  }
-};
 
+  const sendEmailToContact = async () => {
+    try {
+      await navigator.clipboard.writeText(message);
+      alert('📋 Le message a été copié dans le presse-papier ! Ouvre Gmail et colle-le.');
+      onClose();
+    } catch (err) {
+      console.error('Erreur copie email :', err);
+      alert('❌ Erreur lors de la copie de l’email');
+    }
+  };
 
   return (
     <div>
       <a
-        href={`mailto:${contact.email}?subject=${encodeURIComponent('Relance – Candidature de stage')}&body=${encodeURIComponent(message)}`}
+        href={`mailto:${contact.email}?subject=${encodeURIComponent(
+          'Relance – Candidature de stage'
+        )}&body=${encodeURIComponent(message)}`}
         className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
         target="_blank"
         rel="noopener noreferrer"
