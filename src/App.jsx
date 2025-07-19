@@ -2,9 +2,10 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
+import AuthCallback from './pages/AuthCallback';
 import Navbar from './components/Navbar';
 import AuthGate from './components/AuthGate';
-import { AuthProvider, useAuth } from './contexts/AuthContext'; // ✅ corrige ici
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 
 function PrivateRoute({ children }) {
   const { user, loading } = useAuth();
@@ -20,6 +21,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/auth/callback" element={<AuthCallback />} />
           <Route
             path="/dashboard"
             element={
