@@ -17,6 +17,10 @@ export default function Navbar() {
           <Link to="/dashboard" className="text-gray-700 hover:text-blue-600">
             Dashboard
           </Link>
+          <Link to="/templates" className="text-sm text-gray-700 hover:underline">
+            📄 Templates
+          </Link>
+
           <Link to="/account" className="text-gray-700 hover:text-blue-600">
             Mon compte
           </Link>

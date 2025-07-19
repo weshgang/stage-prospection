@@ -7,6 +7,7 @@ import Navbar from './components/Navbar';
 import AuthGate from './components/AuthGate';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Account from './pages/Account';
+import TemplatesPage from './pages/TemplatesPage';
 function PrivateRoute({ children }) {
   const { user, loading } = useAuth();
   if (loading) return null;
@@ -22,6 +23,7 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/account" element={<Account />} />
+          <Route path="/templates" element={<TemplatesPage />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
           <Route
             path="/dashboard"
