@@ -4,11 +4,11 @@ import { useNavigate, Navigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function Login() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
 
   /* 1️⃣ Déjà connecté ? -> dashboard */
-  if (user) return <Navigate to="/dashboard" replace />;
+  if (!loading && user) return <Navigate to="/dashboard" replace />;
 
   /* 2️⃣ États locaux */
   const [email, setEmail] = useState('');
@@ -32,6 +32,7 @@ export default function Login() {
         navigate('/dashboard');
       }
     } catch (err) {
+      console.log('Erreur Supabase :', err);
       setInfo(`❌ ${err.message}`);
     }
   };
