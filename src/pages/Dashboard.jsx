@@ -220,51 +220,44 @@ export default function Dashboard() {
             <div className="overflow-x-auto">
               <table className="w-full text-sm text-left border-separate border-spacing-y-2">
                 <thead className="bg-gray-50 text-gray-600 uppercase text-xs">
-                  <th className="px-4 py-2">
-                    <input
-                      type="checkbox"
-                      checked={
-                        selected.size === filteredContacts.length && filteredContacts.length > 0
-                      }
-                      onChange={(e) =>
-                        setSelected(
-                          e.target.checked ? new Set(filteredContacts.map((c) => c.id)) : new Set()
-                        )
-                      }
-                    />
-                  </th>
-                  {[
-                    ['Nom', 'recruiter_name'],
-                    ['Poste', 'position'],
-                    ['Entreprise', 'firm'],
-                    ['Email', 'email'],
-                    ['Statut', 'tracking_status'],
-                    ['Relance', 'follow_up_date'],
-                    ['Dernier envoi', 'last_sent_at'],
-                    ['Note', 'note'],
-                  ].map(([label, key]) => (
-                    <th
-                      key={key}
-                      className="px-4 py-2 cursor-pointer select-none"
-                      onClick={() =>
-                        key === sortKey ? setSortAsc(!sortAsc) : (setSortKey(key), setSortAsc(true))
-                      }
-                    >
-                      {label}
-                      {sortKey === key && (sortAsc ? ' ▲' : ' ▼')}
-                    </th>
-                  ))}
-
                   <tr>
-                    <th className="px-4 py-2">Nom</th>
-                    <th className="px-4 py-2">Poste</th>
-                    <th className="px-4 py-2">Entreprise</th>
-                    <th className="px-4 py-2">Email</th>
-                    <th className="px-4 py-2">Statut</th>
-                    <th className="px-4 py-2">Relance</th>
-                    <th className="px-4 py-2">Dernier envoi</th>
-                    <th className="px-4 py-2">Note</th>
-                    <th className="px-4 py-2" />
+                    <th className="px-4 py-2">
+                      <input
+                        type="checkbox"
+                        checked={
+                          selected.size === filteredContacts.length && filteredContacts.length > 0
+                        }
+                        onChange={(e) =>
+                          setSelected(
+                            e.target.checked
+                              ? new Set(filteredContacts.map((c) => c.id))
+                              : new Set()
+                          )
+                        }
+                      />
+                    </th>
+                    {[
+                      ['Nom', 'recruiter_name'],
+                      ['Poste', 'position'],
+                      ['Entreprise', 'firm'],
+                      ['Email', 'email'],
+                      ['Statut', 'tracking_status'],
+                      ['Relance', 'follow_up_date'],
+                      ['Dernier envoi', 'last_sent_at'],
+                      ['Note', 'note'],
+                    ].map(([label, key]) => (
+                      <th
+                        key={key}
+                        className="px-4 py-2 cursor-pointer select-none"
+                        onClick={() =>
+                          key === sortKey
+                            ? setSortAsc(!sortAsc)
+                            : (setSortKey(key), setSortAsc(true))
+                        }
+                      >
+                        {sortKey === key && (sortAsc ? ' ▲' : ' ▼')}
+                      </th>
+                    ))}
                   </tr>
                 </thead>
                 <tbody>
