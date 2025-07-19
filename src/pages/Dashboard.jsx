@@ -255,9 +255,11 @@ export default function Dashboard() {
                             : (setSortKey(key), setSortAsc(true))
                         }
                       >
+                        {label}
                         {sortKey === key && (sortAsc ? ' ▲' : ' ▼')}
                       </th>
                     ))}
+                    <th className="px-4 py-2 text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
