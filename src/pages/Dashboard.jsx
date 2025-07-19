@@ -16,7 +16,12 @@ export default function Dashboard() {
 
   const [contacts, setContacts] = useState([]);
   const [campaigns, setCampaigns] = useState([]);
-
+  const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
+  const [industryFilter, setIndustryFilter] = useState('');
+  const [sortKey, setSortKey] = useState('created_at');
+  const [sortAsc, setSortAsc] = useState(false);
+  const [selected, setSelected] = useState(new Set());
   useEffect(() => {
     (async () => {
       const { data, error } = await supabase
@@ -56,7 +61,6 @@ export default function Dashboard() {
       return;
     }
     setContacts((prev) => [...prev, data[0]]);
-    const today = new Date().toISOString().split('T')[0];
   };
   const today = new Date().toISOString().split('T')[0];
 
@@ -100,6 +104,32 @@ export default function Dashboard() {
     }));
     setCampaigns((prev) => [...newRows, ...prev]);
   };
+  const filteredContacts = useMemo(() => {
+    let out = [...contacts];
+
+    // recherche plein‐texte simple
+    const q = search.toLowerCase();
+    if (q)
+      out = out.filter(
+        (c) =>
+          c.recruiter_name?.toLowerCase().includes(q) ||
+          c.position?.toLowerCase().includes(q) ||
+          c.firm?.toLowerCase().includes(q) ||
+          c.email?.toLowerCase().includes(q)
+      );
+
+    if (statusFilter) out = out.filter((c) => c.tracking_status === statusFilter);
+    if (industryFilter) out = out.filter((c) => c.industry === industryFilter);
+
+    // tri
+    out.sort((a, b) => {
+      const valA = a[sortKey] ?? '';
+      const valB = b[sortKey] ?? '';
+      return sortAsc ? String(valA).localeCompare(valB) : String(valB).localeCompare(valA);
+    });
+
+    return out;
+  }, [contacts, search, statusFilter, industryFilter, sortKey, sortAsc]);
 
   return (
     <div className="min-h-screen bg-[#f7f8fa]">
@@ -114,6 +144,42 @@ export default function Dashboard() {
 
       {/* MAIN */}
       <main className="max-w-6xl mx-auto px-4 py-10 space-y-10">
+        <div className="bg-white p-4 rounded-xl shadow flex flex-wrap gap-4 items-center">
+          <input
+            type="text"
+            placeholder="🔍 Rechercher…"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="flex-1 border px-3 py-2 rounded"
+          />
+
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="border px-3 py-2 rounded"
+          >
+            <option value="">Statut (tous)</option>
+            <option>À relancer</option>
+            <option>En attente</option>
+            <option>Répondu</option>
+            <option>Refus</option>
+          </select>
+
+          <select
+            value={industryFilter}
+            onChange={(e) => setIndustryFilter(e.target.value)}
+            className="border px-3 py-2 rounded"
+          >
+            <option value="">Secteur (tous)</option>
+            <option>M&A</option>
+            <option>Asset Management</option>
+            <option>Private Equity</option>
+            <option>Trading</option>
+            <option>Audit / TS</option>
+            <option>VC / Startups</option>
+          </select>
+        </div>
+        {/* Stats */}
         <section className="bg-white p-6 rounded-xl shadow flex flex-wrap gap-6 justify-between">
           <div>
             <p className="text-sm text-gray-500">Contacts totaux</p>
@@ -154,6 +220,41 @@ export default function Dashboard() {
             <div className="overflow-x-auto">
               <table className="w-full text-sm text-left border-separate border-spacing-y-2">
                 <thead className="bg-gray-50 text-gray-600 uppercase text-xs">
+                  <th className="px-4 py-2">
+                    <input
+                      type="checkbox"
+                      checked={
+                        selected.size === filteredContacts.length && filteredContacts.length > 0
+                      }
+                      onChange={(e) =>
+                        setSelected(
+                          e.target.checked ? new Set(filteredContacts.map((c) => c.id)) : new Set()
+                        )
+                      }
+                    />
+                  </th>
+                  {[
+                    ['Nom', 'recruiter_name'],
+                    ['Poste', 'position'],
+                    ['Entreprise', 'firm'],
+                    ['Email', 'email'],
+                    ['Statut', 'tracking_status'],
+                    ['Relance', 'follow_up_date'],
+                    ['Dernier envoi', 'last_sent_at'],
+                    ['Note', 'note'],
+                  ].map(([label, key]) => (
+                    <th
+                      key={key}
+                      className="px-4 py-2 cursor-pointer select-none"
+                      onClick={() =>
+                        key === sortKey ? setSortAsc(!sortAsc) : (setSortKey(key), setSortAsc(true))
+                      }
+                    >
+                      {label}
+                      {sortKey === key && (sortAsc ? ' ▲' : ' ▼')}
+                    </th>
+                  ))}
+
                   <tr>
                     <th className="px-4 py-2">Nom</th>
                     <th className="px-4 py-2">Poste</th>
@@ -167,8 +268,20 @@ export default function Dashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {contacts.map((c) => (
+                  {filteredContacts.map((c) => (
                     <tr key={c.id} className="bg-gray-50 hover:bg-gray-100 rounded-xl shadow-sm">
+                      <td className="px-4 py-3">
+                        <input
+                          type="checkbox"
+                          checked={selected.has(c.id)}
+                          onChange={(e) => {
+                            const next = new Set(selected);
+                            e.target.checked ? next.add(c.id) : next.delete(c.id);
+                            setSelected(next);
+                          }}
+                        />
+                      </td>
+
                       <td className="px-4 py-3 rounded-l">{c.recruiter_name}</td>
                       <td className="px-4 py-3">{c.position}</td>
                       <td className="px-4 py-3">{c.firm}</td>
