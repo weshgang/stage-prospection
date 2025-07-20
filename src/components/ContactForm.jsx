@@ -44,7 +44,7 @@ export default function ContactForm({ onAdd }) {
       </div>
       <div className="flex flex-col">
         <select
-          value={form.industry}
+          value={v.industry}
           onChange={(e) => setForm({ ...form, industry: e.target.value })}
           className="border px-3 py-2 rounded w-full"
         >
