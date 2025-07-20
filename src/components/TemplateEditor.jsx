@@ -10,12 +10,18 @@ export default function TemplateEditor() {
   useEffect(() => {
     if (!user) return;
     (async () => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('email_templates')
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
-      setTemplates(data);
+
+      if (error) {
+        console.error('Erreur chargement templates:', error.message);
+        return;
+      }
+
+      setTemplates(data ?? []);
     })();
   }, [user]);
 
@@ -26,7 +32,10 @@ export default function TemplateEditor() {
         ...form,
       },
     ]);
+
     if (error) return alert('Erreur : ' + error.message);
+    if (!data || !data[0]) return alert('Aucun template n’a été créé.');
+
     setTemplates((t) => [data[0], ...t]);
     setForm({ industry: '', subject: '', body: '' });
   };
