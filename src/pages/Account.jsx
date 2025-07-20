@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
-
+import { Save } from 'lucide-react';
 export default function Account() {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
@@ -128,7 +128,8 @@ export default function Account() {
             type="submit"
             className="w-full py-3 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700"
           >
-            💾 Sauvegarder
+            <Save className="inline mr-2" />
+            Enregistrer
           </button>
         </form>
       )}

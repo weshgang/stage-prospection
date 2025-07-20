@@ -6,7 +6,7 @@ import UploadCSV from '../components/UploadCSV';
 import ContactForm from '../components/ContactForm';
 import { distanceFr } from '../utils/time';
 import { useAuth } from '../contexts/AuthContext';
-import { Mail, Trash2, CircleCheck } from 'lucide-react';
+import { Mail, Trash2, CircleCheck, AlarmClock } from 'lucide-react';
 
 export default function Dashboard() {
   const { user, loading } = useAuth();
@@ -307,7 +307,8 @@ export default function Dashboard() {
                                 onClick={() => sendEmail(c.id)}
                                 className="text-xs text-blue-600 hover:underline"
                               >
-                                🔁 Relancer
+                                <AlarmClock className="inline mr-2" />
+                                Relancer
                               </button>
                               <button
                                 onClick={() => markReplied(c.id)}
