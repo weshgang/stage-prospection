@@ -1,4 +1,3 @@
-// src/pages/Login.jsx
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { useNavigate, Navigate, useSearchParams } from 'react-router-dom';

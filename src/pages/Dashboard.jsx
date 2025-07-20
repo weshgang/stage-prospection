@@ -6,7 +6,7 @@ import UploadCSV from '../components/UploadCSV';
 import ContactForm from '../components/ContactForm';
 import { distanceFr } from '../utils/time';
 import { useAuth } from '../contexts/AuthContext';
-import { Mail, Trash2, CheckCircle } from 'lucide-react';
+import { Mail, Trash2, CircleCheck } from 'lucide-react';
 
 export default function Dashboard() {
   const { user, loading } = useAuth();
@@ -313,7 +313,7 @@ export default function Dashboard() {
                                 onClick={() => markReplied(c.id)}
                                 className="text-xs text-green-600 hover:underline"
                               >
-                                <CheckCircle className="w-4 h-4 mr-1" />
+                                <CircleCheck className="w-4 h-4 mr-1" />
                                 Répondu
                               </button>
                               <button
