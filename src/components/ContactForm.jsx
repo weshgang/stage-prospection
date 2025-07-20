@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { User, UserPlus } from 'lucide-react';
+
 export default function ContactForm({ onAdd }) {
   const [v, setV] = useState({
     recruiter_name: '',
@@ -26,6 +27,7 @@ export default function ContactForm({ onAdd }) {
       tracking_status: 'À relancer',
       follow_up_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
       note: '',
+      industry: '',
     });
   };
   const getFutureDate = (days) =>

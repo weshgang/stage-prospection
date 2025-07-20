@@ -239,7 +239,7 @@ export default function Dashboard() {
                     </th>
                     {[
                       ['Nom', 'recruiter_name'],
-                      ['Industry', 'industry'],
+                      ['Secteur', 'industry'],
                       ['Poste', 'position'],
                       ['Entreprise', 'firm'],
                       ['Email', 'email'],
