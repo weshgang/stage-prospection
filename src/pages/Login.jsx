@@ -9,6 +9,12 @@ export default function Login() {
   const navigate = useNavigate();
   const [q] = useSearchParams();
   const verified = q.get('verified') === '1';
+  const handleGoogleLogin = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+    });
+    if (error) alert('Erreur lors de la connexion avec Google');
+  };
 
   if (!loading && user) return <Navigate to="/dashboard" replace />;
 
@@ -65,6 +71,17 @@ export default function Login() {
             ✅ Votre e-mail est confirmé ! Vous pouvez maintenant vous connecter.
           </div>
         )}
+        <button
+          onClick={handleGoogleLogin}
+          className="bg-white border border-gray-300 rounded px-4 py-2 hover:bg-gray-100"
+        >
+          <img
+            src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+            alt="Google"
+            className="w-5 h-5 inline mr-2"
+          />
+          Connexion avec Google
+        </button>
 
         <label className="block mb-2">Email</label>
         <input

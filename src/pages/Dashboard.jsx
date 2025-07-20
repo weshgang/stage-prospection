@@ -7,7 +7,7 @@ import ContactForm from '../components/ContactForm';
 import { distanceFr } from '../utils/time';
 import { useAuth } from '../contexts/AuthContext';
 import { Mail, Trash2, CircleCheck, AlarmClock, Pencil } from 'lucide-react';
-import { GroupEmailModal } from '../components/GroupEmailModal';
+import GroupEmailModal from '../components/GroupEmailModal';
 
 export default function Dashboard() {
   const { user, loading } = useAuth();
