@@ -9,7 +9,7 @@ export default function Navbar() {
   return (
     <nav className="flex justify-between items-center px-6 py-4 bg-white shadow">
       <Link to="/" className="font-bold text-xl text-gray-800 hover:text-blue-600">
-        StageProspect
+        NetworkingPro
       </Link>
 
       {user ? (
