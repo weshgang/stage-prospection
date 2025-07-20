@@ -1,5 +1,5 @@
 import { useState } from 'react';
-
+import { User, UserPlus } from 'lucide-react';
 export default function ContactForm({ onAdd }) {
   const [v, setV] = useState({
     recruiter_name: '',
@@ -9,6 +9,7 @@ export default function ContactForm({ onAdd }) {
     tracking_status: 'À relancer',
     follow_up_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
     note: '',
+    industry: '',
   });
 
   const h = (k) => (e) => setV({ ...v, [k]: e.target.value });
@@ -41,7 +42,21 @@ export default function ContactForm({ onAdd }) {
           onChange={h('recruiter_name')}
         />
       </div>
-
+      <div className="flex flex-col">
+        <select
+          value={form.industry}
+          onChange={(e) => setForm({ ...form, industry: e.target.value })}
+          className="border px-3 py-2 rounded w-full"
+        >
+          <option value="">Sélectionner un secteur</option>
+          <option>M&A</option>
+          <option>Asset Management</option>
+          <option>Private Equity</option>
+          <option>Trading</option>
+          <option>Audit / TS</option>
+          <option>VC / Startups</option>
+        </select>
+      </div>
       <div className="flex flex-col">
         <label className="text-sm text-gray-600 mb-1">Poste</label>
         <input
@@ -118,7 +133,8 @@ export default function ContactForm({ onAdd }) {
           type="submit"
           className="w-full py-3 rounded bg-blue-600 text-white font-semibold hover:bg-blue-700 transition"
         >
-          ➕ Ajouter le contact
+          <UserPlus className="inline mr-2" />
+          Ajouter le contact
         </button>
       </div>
     </form>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
-import { CircleCheck, ClipboardCopy } from 'lucide-react';
+import { CircleCheck, ClipboardCopy, Mail, FileText, Mailbox } from 'lucide-react';
 
 export default function EmailModal({ contact, profile, onClose }) {
   const [message, setMessage] = useState('');
@@ -62,7 +62,10 @@ export default function EmailModal({ contact, profile, onClose }) {
   return (
     <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
       <div className="bg-white w-full max-w-xl p-6 rounded-lg shadow-lg space-y-4 relative">
-        <h2 className="text-lg font-semibold">✉️ Email de relance</h2>
+        <h2 className="text-lg font-semibold">
+          <Mail className="inline mr-2" />
+          Email de relance
+        </h2>
 
         <select
           className="border px-3 py-2 rounded w-full text-sm"
@@ -74,7 +77,10 @@ export default function EmailModal({ contact, profile, onClose }) {
             if (template) applyTemplate(template);
           }}
         >
-          <option value="">📄 Choisir un template</option>
+          <option value="">
+            <FileText className="inline mr-2" />
+            Sélectioner une template
+          </option>
           {templates.map((t) => (
             <option key={t.id} value={t.id}>
               {t.industry} – {t.subject}
@@ -122,7 +128,8 @@ export default function EmailModal({ contact, profile, onClose }) {
           target="_blank"
           rel="noopener noreferrer"
         >
-          📬 Ouvrir Gmail
+          <Mailbox className="inline mr-2" />
+          Ouvrir dans Gmail
         </a>
       </div>
     </div>
