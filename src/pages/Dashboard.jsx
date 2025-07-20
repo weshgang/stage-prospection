@@ -7,6 +7,7 @@ import ContactForm from '../components/ContactForm';
 import { distanceFr } from '../utils/time';
 import { useAuth } from '../contexts/AuthContext';
 import { Mail, Trash2, CircleCheck, AlarmClock, Pencil } from 'lucide-react';
+import { GroupEmailModal } from '../components/GroupEmailModal';
 
 export default function Dashboard() {
   const { user, loading } = useAuth();
@@ -24,6 +25,8 @@ export default function Dashboard() {
   const [sortKey, setSortKey] = useState('created_at');
   const [sortAsc, setSortAsc] = useState(false);
   const [selected, setSelected] = useState(new Set());
+  const [showGroupEmail, setShowGroupEmail] = useState(false);
+
   useEffect(() => {
     (async () => {
       const { data, error } = await supabase
@@ -353,6 +356,22 @@ export default function Dashboard() {
               </table>
             </div>
           </section>
+        )}
+        {/* Emails groupés */}
+        {selected.size > 0 && (
+          <button
+            onClick={() => setShowGroupEmail(true)}
+            className="bg-blue-600 text-white px-3 py-2 rounded hover:bg-blue-700"
+          >
+            Envoyer en masse ({selected.size})
+          </button>
+        )}
+        {showGroupEmail && (
+          <GroupEmailModal
+            contacts={contacts.filter((c) => selected.has(c.id))}
+            profile={profile}
+            onClose={() => setShowGroupEmail(false)}
+          />
         )}
 
         {/* Import CSV */}
