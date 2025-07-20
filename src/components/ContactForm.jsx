@@ -1,25 +1,9 @@
 import { useState } from 'react';
 import { User, UserPlus } from 'lucide-react';
 
-export default function ContactForm({ onAdd }) {
-  const [v, setV] = useState({
-    recruiter_name: '',
-    position: '',
-    firm: '',
-    email: '',
-    tracking_status: 'À relancer',
-    follow_up_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-    note: '',
-    industry: '',
-  });
-
-  const h = (k) => (e) => setV({ ...v, [k]: e.target.value });
-
-  const submit = (e) => {
-    e.preventDefault();
-    if (!v.email) return;
-    onAdd(v);
-    setV({
+export default function ContactForm({ onAdd, initialValues = null, editing = false }) {
+  const [v, setV] = useState(
+    initialValues || {
       recruiter_name: '',
       position: '',
       firm: '',
@@ -28,7 +12,27 @@ export default function ContactForm({ onAdd }) {
       follow_up_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
       note: '',
       industry: '',
-    });
+    }
+  );
+
+  const h = (k) => (e) => setV({ ...v, [k]: e.target.value });
+
+  const submit = (e) => {
+    e.preventDefault();
+    if (!v.email) return;
+    onAdd(v);
+    if (!editing) {
+      setV({
+        recruiter_name: '',
+        position: '',
+        firm: '',
+        email: '',
+        tracking_status: 'À relancer',
+        follow_up_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        note: '',
+        industry: '',
+      });
+    }
   };
   const getFutureDate = (days) =>
     new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString().split('T')[0];

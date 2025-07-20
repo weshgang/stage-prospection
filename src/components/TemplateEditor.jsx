@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
-import { Save } from 'lucide-react';
+import { Save, FileText } from 'lucide-react';
 export default function TemplateEditor() {
   const { user } = useAuth();
   const [templates, setTemplates] = useState([]);
@@ -42,7 +42,10 @@ export default function TemplateEditor() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-lg font-semibold">📄 Gérer mes templates</h2>
+      <h2 className="text-lg font-semibold">
+        <FileText className="inline w-5 h-5 mr-1" />
+        Gérer mes templates
+      </h2>
 
       <div className="space-y-3">
         <input

@@ -6,13 +6,14 @@ import UploadCSV from '../components/UploadCSV';
 import ContactForm from '../components/ContactForm';
 import { distanceFr } from '../utils/time';
 import { useAuth } from '../contexts/AuthContext';
-import { Mail, Trash2, CircleCheck, AlarmClock } from 'lucide-react';
+import { Mail, Trash2, CircleCheck, AlarmClock, Pencil } from 'lucide-react';
 
 export default function Dashboard() {
   const { user, loading } = useAuth();
   if (loading) return null;
   if (!user) return <Navigate to="/login" replace />;
   const [selectedContact, setSelectedContact] = useState(null);
+  const [editingContact, setEditingContact] = useState(null);
   const [profile, setProfile] = useState(null);
 
   const [contacts, setContacts] = useState([]);
@@ -312,6 +313,13 @@ export default function Dashboard() {
                                 <AlarmClock className="w-4 h-4 mr-1" />
                                 Relancer
                               </button>
+                              <button
+                                onClick={() => setEditingContact(c)}
+                                className="flex items-center text-xs text-yellow-600 hover:underline"
+                              >
+                                <Pencil className="w-4 h-4 mr-1" />
+                                Éditer
+                              </button>
 
                               <button
                                 onClick={() => markReplied(c.id)}
@@ -330,6 +338,13 @@ export default function Dashboard() {
                               </button>
                             </>
                           )}
+                          <button
+                            onClick={() => setEditingContact(c)}
+                            className="text-xs text-yellow-600 hover:underline"
+                          >
+                            <Pencil className="w-4 h-4 mr-1" />
+                            Éditer
+                          </button>
 
                           <button
                             onClick={() => deleteContact(c.id)}
@@ -388,6 +403,38 @@ export default function Dashboard() {
             </div>
           </section>
         )}
+        {/* Modal pour modifier un contact */}
+        {editingContact && (
+          <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
+            <div className="bg-white w-full max-w-lg p-6 rounded shadow space-y-4 relative">
+              <h2 className="text-lg font-semibold">✏️ Modifier le contact</h2>
+              <ContactForm
+                onAdd={(updated) => {
+                  const updatedContact = { ...editingContact, ...updated };
+                  supabase
+                    .from('contacts')
+                    .update(updatedContact)
+                    .eq('id', editingContact.id)
+                    .then(() => {
+                      setContacts((cs) =>
+                        cs.map((x) => (x.id === updatedContact.id ? updatedContact : x))
+                      );
+                      setEditingContact(null);
+                    });
+                }}
+                initialValues={editingContact}
+                editing
+              />
+              <button
+                onClick={() => setEditingContact(null)}
+                className="text-sm text-gray-500 hover:underline"
+              >
+                Annuler
+              </button>
+            </div>
+          </div>
+        )}
+        {/* Modal pour envoyer un email */}
         {selectedContact && profile && (
           <EmailModal
             contact={selectedContact}
