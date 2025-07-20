@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-
+import { CheckCirle, ClipboardCopy } from 'lucide-react';
 export default function EmailModal({ contact, profile, onClose }) {
   const [message, setMessage] = useState('');
 
@@ -78,7 +78,8 @@ export default function EmailModal({ contact, profile, onClose }) {
               onClick={sendEmailToContact}
               className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
             >
-              ✅ Envoyer
+              <CheckCirle className="w-4 h-4 mr-1" />
+              Envoyer
             </button>
 
             <button
@@ -88,7 +89,8 @@ export default function EmailModal({ contact, profile, onClose }) {
               }}
               className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
             >
-              📋 Copier
+              <ClipboardCopy className="w-4 h-4 mr-1" />
+              Copier
             </button>
 
             <button onClick={onClose} className="text-gray-500 hover:underline px-3 py-2">

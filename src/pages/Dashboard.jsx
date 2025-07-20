@@ -6,6 +6,7 @@ import UploadCSV from '../components/UploadCSV';
 import ContactForm from '../components/ContactForm';
 import { distanceFr } from '../utils/time';
 import { useAuth } from '../contexts/AuthContext';
+import { Mail, Trash2, CheckCircle } from 'lucide-react';
 
 export default function Dashboard() {
   const { user, loading } = useAuth();
@@ -282,10 +283,11 @@ export default function Dashboard() {
                       <td className="px-4 py-3">{c.firm}</td>
                       <td className="px-4 py-3">{c.email}</td>
                       <td className="px-4 py-3">
-                        <span className="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-700">
+                        <div className="inline-flex items-center px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-700 font-semibold">
                           {c.tracking_status || '—'}
-                        </span>
+                        </div>
                       </td>
+
                       <td className="px-4 py-3">
                         {c.follow_up_date
                           ? new Date(c.follow_up_date).toLocaleDateString('fr-FR')
@@ -297,35 +299,40 @@ export default function Dashboard() {
                       <td className="px-4 py-3 max-w-[150px] truncate" title={c.note || ''}>
                         {c.note || '—'}
                       </td>
-                      <td className="px-4 py-3 rounded-r text-right space-x-2">
-                        {!c.replied && (
-                          <>
-                            <button
-                              onClick={() => sendEmail(c.id)}
-                              className="text-xs font-medium text-blue-600 hover:underline"
-                            >
-                              Relancer
-                            </button>
-                            <button
-                              onClick={() => markReplied(c.id)}
-                              className="text-xs font-medium text-green-600 hover:underline"
-                            >
-                              Répondu
-                            </button>
-                            <button
-                              onClick={() => setSelectedContact(c)}
-                              className="text-xs font-medium text-gray-600 hover:underline"
-                            >
-                              ✉️ Email
-                            </button>
-                          </>
-                        )}
-                        <button
-                          onClick={() => deleteContact(c.id)}
-                          className="text-xs font-medium text-red-500 hover:underline ml-2"
-                        >
-                          🗑 Supprimer
-                        </button>
+                      <td className="px-4 py-3 rounded-r">
+                        <div className="flex flex-wrap gap-2 justify-end">
+                          {!c.replied && (
+                            <>
+                              <button
+                                onClick={() => sendEmail(c.id)}
+                                className="text-xs text-blue-600 hover:underline"
+                              >
+                                🔁 Relancer
+                              </button>
+                              <button
+                                onClick={() => markReplied(c.id)}
+                                className="text-xs text-green-600 hover:underline"
+                              >
+                                <CheckCircle className="w-4 h-4 mr-1" />
+                                Répondu
+                              </button>
+                              <button
+                                onClick={() => setSelectedContact(c)}
+                                className="text-xs text-gray-600 hover:underline"
+                              >
+                                <Mail className="w-4 h-4 mr-1" />
+                                Email
+                              </button>
+                            </>
+                          )}
+                          <button
+                            onClick={() => deleteContact(c.id)}
+                            className="text-xs text-red-500 hover:underline"
+                          >
+                            <Trash2 className="w-4 h-4 mr-1" />
+                            Supprimer
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}

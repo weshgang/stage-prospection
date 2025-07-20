@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
-
+import { Save } from 'lucide-react';
 export default function TemplateEditor() {
   const { user } = useAuth();
   const [templates, setTemplates] = useState([]);
@@ -93,7 +93,8 @@ export default function TemplateEditor() {
           onClick={saveTemplate}
           className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
         >
-          💾 Enregistrer
+          <Save className="w-4 h-4 mr-1" />
+          Enregistrer
         </button>
       </div>
 
