@@ -64,6 +64,17 @@ export default function TemplateEditor() {
           value={form.body}
           onChange={(e) => setForm({ ...form, body: e.target.value })}
         />
+        <div className="bg-white border rounded p-4 whitespace-pre-wrap text-sm font-mono">
+          {form.body.split(/({{.*?}})/g).map((part, i) =>
+            part.startsWith('{{') ? (
+              <span key={i} className="text-blue-600 font-semibold">
+                {part}
+              </span>
+            ) : (
+              <span key={i}>{part}</span>
+            )
+          )}
+        </div>
         <div className="text-sm text-gray-600 bg-gray-50 p-3 rounded border">
           <p className="font-medium mb-2">Variables disponibles :</p>
           <ul className="space-y-1 list-disc list-inside">
@@ -89,18 +100,6 @@ export default function TemplateEditor() {
             </li>
           </ul>
         </div>
-        <div className="bg-white border rounded p-4 whitespace-pre-wrap text-sm font-mono">
-          {form.body.split(/({{.*?}})/g).map((part, i) =>
-            part.startsWith('{{') ? (
-              <span key={i} className="text-blue-600 font-semibold">
-                {part}
-              </span>
-            ) : (
-              <span key={i}>{part}</span>
-            )
-          )}
-        </div>
-
         <button
           onClick={saveTemplate}
           className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
