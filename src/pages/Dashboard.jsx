@@ -314,14 +314,6 @@ export default function Dashboard() {
                                 Relancer
                               </button>
                               <button
-                                onClick={() => setEditingContact(c)}
-                                className="flex items-center text-xs text-yellow-600 hover:underline"
-                              >
-                                <Pencil className="w-4 h-4 mr-1" />
-                                Éditer
-                              </button>
-
-                              <button
                                 onClick={() => markReplied(c.id)}
                                 className="flex items-center text-xs text-green-600 hover:underline"
                               >

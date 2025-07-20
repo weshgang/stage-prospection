@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { User, UserPlus } from 'lucide-react';
+import { UserPlus } from 'lucide-react';
 
 export default function ContactForm({ onAdd, initialValues = null, editing = false }) {
   const [v, setV] = useState(
@@ -55,6 +55,7 @@ export default function ContactForm({ onAdd, initialValues = null, editing = fal
           onChange={h('industry')}
           className="border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
         >
+          <option value="">Sélectionner un secteur</option>
           <option>M&A</option>
           <option>Asset Management</option>
           <option>Private Equity</option>

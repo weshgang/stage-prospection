@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 import { Save } from 'lucide-react';
+import AccountSecurity from '../components/AccountSecurity';
+
 export default function Account() {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
@@ -56,7 +58,6 @@ export default function Account() {
   return (
     <div className="max-w-2xl mx-auto py-10 px-4">
       <h1 className="text-2xl font-bold mb-6">Mon compte</h1>
-
       {loading ? (
         <p>Chargement...</p>
       ) : (
@@ -133,6 +134,8 @@ export default function Account() {
           </button>
         </form>
       )}
+      {/* Section sécurité : modifier mot de passe / supprimer compte */}
+      <AccountSecurity />
     </div>
   );
 }
