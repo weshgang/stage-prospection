@@ -43,18 +43,18 @@ export default function ContactForm({ onAdd }) {
         />
       </div>
       <div className="flex flex-col">
+        <label className="text-sm text-gray-600 mb-1">Secteur</label>
         <select
           value={v.industry}
-          onChange={(e) => setForm({ ...form, industry: e.target.value })}
-          className="border px-3 py-2 rounded w-full"
+          onChange={h('industry')}
+          className="border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
         >
-          <option value="">Sélectionner un secteur</option>
           <option>M&A</option>
           <option>Asset Management</option>
           <option>Private Equity</option>
           <option>Trading</option>
-          <option>Audit / TS</option>
-          <option>VC / Startups</option>
+          <option>Audit-TS</option>
+          <option>VC-Startups</option>
         </select>
       </div>
       <div className="flex flex-col">

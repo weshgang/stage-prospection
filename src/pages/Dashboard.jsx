@@ -246,6 +246,7 @@ export default function Dashboard() {
                       ['Relance', 'follow_up_date'],
                       ['Dernier envoi', 'last_sent_at'],
                       ['Note', 'note'],
+                      ['Industry', 'industry'],
                     ].map(([label, key]) => (
                       <th
                         key={key}
@@ -279,6 +280,7 @@ export default function Dashboard() {
                       </td>
 
                       <td className="px-4 py-3 rounded-l">{c.recruiter_name}</td>
+                      <td className="px-4 py-3">{c.industry}</td>
                       <td className="px-4 py-3">{c.position}</td>
                       <td className="px-4 py-3">{c.firm}</td>
                       <td className="px-4 py-3">{c.email}</td>
