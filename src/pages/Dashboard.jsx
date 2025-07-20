@@ -239,6 +239,7 @@ export default function Dashboard() {
                     </th>
                     {[
                       ['Nom', 'recruiter_name'],
+                      ['Industry', 'industry'],
                       ['Poste', 'position'],
                       ['Entreprise', 'firm'],
                       ['Email', 'email'],
@@ -246,7 +247,6 @@ export default function Dashboard() {
                       ['Relance', 'follow_up_date'],
                       ['Dernier envoi', 'last_sent_at'],
                       ['Note', 'note'],
-                      ['Industry', 'industry'],
                     ].map(([label, key]) => (
                       <th
                         key={key}
@@ -302,35 +302,38 @@ export default function Dashboard() {
                         {c.note || '—'}
                       </td>
                       <td className="px-4 py-3 rounded-r">
-                        <div className="flex flex-wrap gap-2 justify-end">
+                        <div className="flex flex-wrap gap-2 items-center">
                           {!c.replied && (
                             <>
                               <button
                                 onClick={() => sendEmail(c.id)}
-                                className="text-xs text-blue-600 hover:underline"
+                                className="flex items-center text-xs text-blue-600 hover:underline"
                               >
-                                <AlarmClock className="inline mr-2" />
+                                <AlarmClock className="w-4 h-4 mr-1" />
                                 Relancer
                               </button>
+
                               <button
                                 onClick={() => markReplied(c.id)}
-                                className="text-xs text-green-600 hover:underline"
+                                className="flex items-center text-xs text-green-600 hover:underline"
                               >
                                 <CircleCheck className="w-4 h-4 mr-1" />
                                 Répondu
                               </button>
+
                               <button
                                 onClick={() => setSelectedContact(c)}
-                                className="text-xs text-gray-600 hover:underline"
+                                className="flex items-center text-xs text-gray-600 hover:underline"
                               >
                                 <Mail className="w-4 h-4 mr-1" />
                                 Email
                               </button>
                             </>
                           )}
+
                           <button
                             onClick={() => deleteContact(c.id)}
-                            className="text-xs text-red-500 hover:underline"
+                            className="flex items-center text-xs text-red-500 hover:underline"
                           >
                             <Trash2 className="w-4 h-4 mr-1" />
                             Supprimer
