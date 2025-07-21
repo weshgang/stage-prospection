@@ -68,7 +68,7 @@ export default function EmailModal({ contact, profile, onClose }) {
       body: JSON.stringify({
         accessToken,
         email,
-        contacts: selectedContacts, // tableau [{ email, name }]
+        contacts: [contact], // tableau [{ email, name }]
         template: selectedTemplate, // objet { subject, content }
       }),
     });
