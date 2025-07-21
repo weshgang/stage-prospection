@@ -12,6 +12,10 @@ export default function Login() {
   const handleGoogleLogin = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
+      options: {
+        scopes:
+          'https://www.googleapis.com/auth/gmail.send https://www.googleapis.com/auth/userinfo.email',
+      },
     });
     if (error) alert('Erreur lors de la connexion avec Google');
   };

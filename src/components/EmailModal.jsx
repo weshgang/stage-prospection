@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
-import { CircleCheck, ClipboardCopy, Mail, FileText, Mailbox } from 'lucide-react';
+import { CircleCheck, ClipboardCopy, Mail } from 'lucide-react';
+import { getGmailAccessToken } from '../contexts/AuthContext';
 
 export default function EmailModal({ contact, profile, onClose }) {
   const [message, setMessage] = useState('');
@@ -58,6 +59,27 @@ export default function EmailModal({ contact, profile, onClose }) {
       alert('❌ Erreur lors de la copie de l’email');
     }
   };
+  const handleSendEmails = async () => {
+    const { accessToken, email } = await getGmailAccessToken();
+
+    const res = await fetch('/api/sendEmails', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        accessToken,
+        email,
+        contacts: selectedContacts, // tableau [{ email, name }]
+        template: selectedTemplate, // objet { subject, content }
+      }),
+    });
+
+    const data = await res.json();
+    if (data.success) {
+      alert('Emails envoyés avec succès !');
+    } else {
+      alert(`Erreur : ${data.error}`);
+    }
+  };
 
   return (
     <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
@@ -77,10 +99,7 @@ export default function EmailModal({ contact, profile, onClose }) {
             if (template) applyTemplate(template);
           }}
         >
-          <option value="">
-            <FileText className="inline mr-2" />
-            Sélectioner une template
-          </option>
+          <option value="">Sélectionner une template</option>
           {templates.map((t) => (
             <option key={t.id} value={t.id}>
               {t.industry} – {t.subject}
@@ -97,7 +116,7 @@ export default function EmailModal({ contact, profile, onClose }) {
 
         <div className="flex justify-between items-center space-x-3">
           <button
-            onClick={sendEmailToContact}
+            onClick={handleSendEmails}
             className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 flex items-center"
           >
             <CircleCheck className="w-4 h-4 mr-2" />
@@ -119,18 +138,6 @@ export default function EmailModal({ contact, profile, onClose }) {
             Fermer
           </button>
         </div>
-
-        <a
-          href={`mailto:${contact.email}?subject=${encodeURIComponent(
-            'Relance – Candidature de stage'
-          )}&body=${encodeURIComponent(message)}`}
-          className="block mt-4 text-center bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Mailbox className="inline mr-2" />
-          Ouvrir dans Gmail
-        </a>
       </div>
     </div>
   );
