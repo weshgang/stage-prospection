@@ -1,46 +1,20 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
-import { Save, FileText } from 'lucide-react';
+import { Save } from 'lucide-react';
 export default function TemplateEditor() {
   const { user } = useAuth();
   const [templates, setTemplates] = useState([]);
   const [form, setForm] = useState({ industry: '', subject: '', body: '' });
-  const defaultTemplates = [
-    {
-      industry: 'M&A',
-      subject: 'Candidature – Stage en M&A',
-      body: 'Bonjour {{prenom}},\n\nJe vous contacte pour un stage en M&A chez {{entreprise}}...',
-    },
-    {
-      industry: 'Sales Equity',
-      subject: 'Stage – Sales Equity',
-      body: 'Bonjour {{prenom}},\n\nJe suis étudiant à {{ecole}} et je suis très intéressé par le sales...',
-    },
-    {
-      industry: 'Equity Derivatives',
-      subject: 'Candidature – Equity Derivatives',
-      body: 'Bonjour {{prenom}},\n\nPassionné par les dérivés, je souhaiterais rejoindre votre équipe...',
-    },
-    {
-      industry: 'Asset Management',
-      subject: 'Stage – Asset Management',
-      body: 'Bonjour {{prenom}},\n\nJe suis passionné par les marchés et souhaite rejoindre {{entreprise}}...',
-    },
-    {
-      industry: 'Private Equity',
-      subject: 'Stage – Private Equity',
-      body: 'Bonjour {{prenom}},\n\nJe vous contacte dans le cadre de ma recherche de stage en PE...',
-    },
-  ];
 
   useEffect(() => {
     if (!user) return;
+
     (async () => {
       const { data, error } = await supabase
         .from('email_templates')
         .select('*')
-        .eq('user_id', user.id)
+        .or(`user_id.eq.${user.id},user_id.is.null`)
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -72,28 +46,41 @@ export default function TemplateEditor() {
       <h1 className="text-3xl font-bold">Gérer mes templates</h1>
       {/* Cartes templates */}
       <div>
-        <p className="text-gray-600 mb-2">Mes templates existantes</p>
+        <p className="text-gray-600 mb-2">Templates personnalisés</p>
         <div className="border rounded-lg p-4 shadow-sm hover:shadow-md transition">
           <ul className="divide-y">
-            {(templates.length === 0 ? defaultTemplates : templates).map((t, i) => (
-              <li key={i} className="py-4">
-                <p className="font-semibold">
-                  {t.industry} – {t.subject}
-                </p>
-                <pre className="whitespace-pre-wrap text-sm">{t.body}</pre>
-              </li>
-            ))}
+            {templates
+              .filter((t) => t.user_id === user.id)
+              .map((t, i) => (
+                <li key={`user-${i}`} className="py-4">
+                  <p className="font-semibold">
+                    {t.industry} – {t.subject}
+                  </p>
+                  <pre className="whitespace-pre-wrap text-sm">{t.body || t.content}</pre>
+                </li>
+              ))}
           </ul>
+        </div>
 
-          {templates.map((t) => (
-            <div key={t.id} className="border rounded-lg p-4 shadow-sm hover:shadow-md transition">
-              <h3 className="text-lg font-semibold">{t.industry}</h3>
-              <p className="text-sm text-gray-500 mb-2">{t.subject}</p>
-              <p className="text-sm text-gray-600 whitespace-pre-wrap">{t.body.slice(0, 100)}...</p>
-            </div>
-          ))}
+        <p className="text-gray-600 mt-6 mb-2">Templates par défaut</p>
+        <div className="border rounded-lg p-4 shadow-sm hover:shadow-md transition bg-gray-50">
+          <ul className="divide-y">
+            {templates
+              .filter((t) => t.user_id === null)
+              .map((t, i) => (
+                <li key={`default-${i}`} className="py-4">
+                  <p className="font-semibold text-gray-700">
+                    {t.industry} – {t.subject}
+                  </p>
+                  <pre className="whitespace-pre-wrap text-sm text-gray-600">
+                    {t.body || t.content}
+                  </pre>
+                </li>
+              ))}
+          </ul>
         </div>
       </div>
+
       {/* Formulaire de création */}
       <h2 className="text-2xl font-bold mb-4">Créer ma propre template</h2>
       <div className="bg-white p-4 border rounded-md shadow space-y-4 max-w-xl">

@@ -4,7 +4,8 @@ import { UserPlus } from 'lucide-react';
 export default function ContactForm({ onAdd, initialValues = null, editing = false }) {
   const [v, setV] = useState(
     initialValues || {
-      recruiter_name: '',
+      FirstName: '',
+      LastName: '',
       position: '',
       firm: '',
       email: '',
@@ -12,6 +13,7 @@ export default function ContactForm({ onAdd, initialValues = null, editing = fal
       follow_up_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
       note: '',
       industry: '',
+      sex: '',
     }
   );
 
@@ -23,8 +25,10 @@ export default function ContactForm({ onAdd, initialValues = null, editing = fal
     onAdd(v);
     if (!editing) {
       setV({
-        recruiter_name: '',
+        LastName: '',
+        FirstName: '',
         position: '',
+        sex: '',
         firm: '',
         email: '',
         tracking_status: 'À relancer',
@@ -39,15 +43,31 @@ export default function ContactForm({ onAdd, initialValues = null, editing = fal
 
   return (
     <form onSubmit={submit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div className="flex flex-col">
-        <label className="text-sm text-gray-600 mb-1">Nom recruteur</label>
-        <input
-          className="border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-          placeholder="Ex: Jean Dupont"
-          value={v.recruiter_name}
-          onChange={h('recruiter_name')}
-        />
+      <div className="flex space-x-2">
+        <div className="flex-1">
+          <label className="text-sm font-medium">Prénom du recruteur</label>
+          <input
+            type="text"
+            name="recruiter_first_name"
+            value={v.FirstName || ''}
+            onChange={h('FirstName')}
+            className="border rounded px-3 py-2 w-full"
+            required
+          />
+        </div>
+        <div className="flex-1">
+          <label className="text-sm font-medium">Nom du recruteur</label>
+          <input
+            type="text"
+            name="recruiter_last_name"
+            value={v.LastName || ''}
+            onChange={h('LastName')}
+            className="border rounded px-3 py-2 w-full"
+            required
+          />
+        </div>
       </div>
+
       <div className="flex flex-col">
         <label className="text-sm text-gray-600 mb-1">Secteur</label>
         <select
@@ -81,6 +101,15 @@ export default function ContactForm({ onAdd, initialValues = null, editing = fal
           placeholder="Ex: Rothschild"
           value={v.firm}
           onChange={h('firm')}
+        />
+      </div>
+      <div className="flex flex-col">
+        <label className="text-sm text-gray-600 mb-1">Homme/Femme</label>
+        <input
+          className="border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          placeholder="Taper H ou F"
+          value={v.sex}
+          onChange={h('sex')}
         />
       </div>
 

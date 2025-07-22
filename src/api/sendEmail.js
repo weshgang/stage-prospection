@@ -1,4 +1,3 @@
-// src/api/sendEmails.js (ou /api/sendEmails.js pour Vercel)
 import nodemailer from 'nodemailer';
 
 export default async function handler(req, res) {
@@ -10,6 +9,13 @@ export default async function handler(req, res) {
 
   if (!accessToken || !email || !contacts || !template) {
     return res.status(400).json({ error: 'Paramètres manquants' });
+  }
+
+  function applyTemplate(text, variables) {
+    return text.replace(/{{(.*?)}}/g, (_, key) => {
+      const value = variables[key.trim()];
+      return value !== undefined && value !== null ? value : '';
+    });
   }
 
   const transporter = nodemailer.createTransport({
@@ -25,12 +31,31 @@ export default async function handler(req, res) {
 
   try {
     for (const contact of contacts) {
-      const html = template.content.replace('{{name}}', contact.name || '');
+      // Sécurité : ne traiter que "H" ou "F"
+      const sexeCode = contact.sexe?.toUpperCase();
+      const sexeCivil = sexeCode === 'F' ? 'Madame' : sexeCode === 'H' ? 'Monsieur' : null;
+
+      if (!sexeCivil) {
+        console.warn(`Contact invalide (sexe non reconnu):`, contact);
+        continue; // skip
+      }
+
+      // Remplacer les variables dynamiques
+      const variables = {
+        ...contact,
+        sexe: contact.sexe === 'F' ? 'Madame' : 'Monsieur',
+        prenom: contact.contact_firstname || '',
+        nom: contact.contact_familyname || '',
+      };
+
+      const filledSubject = applyTemplate(template.subject, variables);
+      const filledBody = applyTemplate(template.content || template.body, variables);
+
       await transporter.sendMail({
         from: email,
         to: contact.email,
-        subject: template.subject,
-        html,
+        subject: filledSubject,
+        html: filledBody.replace(/\n/g, '<br>'),
       });
     }
 

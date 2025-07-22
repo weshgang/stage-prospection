@@ -2,51 +2,59 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { CircleCheck, ClipboardCopy, Mail } from 'lucide-react';
 import { getGmailAccessToken } from '../contexts/AuthContext';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function EmailModal({ contact, profile, onClose }) {
   const [message, setMessage] = useState('');
   const [templates, setTemplates] = useState([]);
   const [selectedTemplateId, setSelectedTemplateId] = useState('');
+  const [selectedTemplate, setSelectedTemplate] = useState(null);
+  const { user } = useAuth();
 
   useEffect(() => {
-    const fetchTemplates = async () => {
-      if (!contact || !profile) return;
+    if (!user) return;
 
-      const { data } = await supabase
+    (async () => {
+      const { data, error } = await supabase
         .from('email_templates')
         .select('*')
-        .eq('user_id', profile.id)
+        .or(`user_id.eq.${user.id},user_id.is.null`)
         .order('created_at', { ascending: false });
 
-      setTemplates(data ?? []);
-
-      // Auto-sélectionner template du même secteur
-      const match = data?.find((tpl) => tpl.industry === contact.industry);
-      if (match) {
-        setSelectedTemplateId(match.id);
-        applyTemplate(match);
+      if (error) {
+        console.error('Erreur chargement templates:', error.message);
+        return;
       }
-    };
 
-    fetchTemplates();
-  }, [contact, profile]);
+      setTemplates(data ?? []);
+    })();
+  }, [user]);
 
   function applyTemplate(template) {
+    const sexeCode = contact.sex?.toUpperCase();
+    const sexeCivil = sexeCode === 'F' ? 'Madame' : sexeCode === 'H' ? 'Monsieur' : '';
+
     const replacements = {
-      '{{prenom}}': contact.recruiter_name?.split(' ')[0] || '',
-      '{{nom}}': contact.recruiter_name?.split(' ').slice(1).join(' ') || '',
+      '{{prenom}}': contact.FirstName || '',
+      '{{nom}}': contact.LastName || '',
       '{{poste}}': contact.position || '',
       '{{entreprise}}': contact.firm || '',
       '{{email}}': profile.email || '',
       '{{ecole}}': profile.ecole || '',
+      '{{sexe}}': sexeCivil,
     };
 
-    let result = template.body;
+    // Remplacer dans le sujet et le corps
+    let subject = template.subject || '';
+    let body = template.body || template.content || '';
+
     for (const [key, value] of Object.entries(replacements)) {
-      result = result.replaceAll(key, value);
+      subject = subject.replaceAll(key, value);
+      body = body.replaceAll(key, value);
     }
 
-    setMessage(result);
+    setSelectedTemplate({ subject, body });
+    setMessage(body);
   }
 
   const sendEmailToContact = async () => {

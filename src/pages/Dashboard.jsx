@@ -117,7 +117,8 @@ export default function Dashboard() {
     if (q)
       out = out.filter(
         (c) =>
-          c.recruiter_name?.toLowerCase().includes(q) ||
+          c.LastName?.toLowerCase().includes(q) ||
+          c.FirstName?.toLowerCase().includes(q) ||
           c.position?.toLowerCase().includes(q) ||
           c.firm?.toLowerCase().includes(q) ||
           c.email?.toLowerCase().includes(q)
@@ -242,7 +243,8 @@ export default function Dashboard() {
                       />
                     </th>
                     {[
-                      ['Nom', 'recruiter_name'],
+                      ['Nom', 'LastName'],
+                      ['Prénom', 'FirstName'],
                       ['Secteur', 'industry'],
                       ['Poste', 'position'],
                       ['Entreprise', 'firm'],
@@ -282,8 +284,8 @@ export default function Dashboard() {
                           }}
                         />
                       </td>
-
-                      <td className="px-4 py-3 rounded-l">{c.recruiter_name}</td>
+                      <td className="px-4 py-3">{c.LastName}</td>
+                      <td className="px-4 py-3 rounded-l">{c.FirstName}</td>
                       <td className="px-4 py-3">{c.industry}</td>
                       <td className="px-4 py-3">{c.position}</td>
                       <td className="px-4 py-3">{c.firm}</td>
@@ -388,7 +390,7 @@ export default function Dashboard() {
               <table className="w-full text-sm text-left border-separate border-spacing-y-2">
                 <thead className="bg-gray-50 text-gray-600 uppercase text-xs">
                   <tr>
-                    <th className="px-4 py-2">Recruiter</th>
+                    <th className="px-4 py-2">Nom</th>
                     <th className="px-4 py-2">Position</th>
                     <th className="px-4 py-2">Firm</th>
                     <th className="px-4 py-2">Email</th>
@@ -398,7 +400,8 @@ export default function Dashboard() {
                 <tbody>
                   {campaigns.map((c) => (
                     <tr key={c.id} className="bg-gray-50 hover:bg-gray-100 rounded-xl shadow-sm">
-                      <td className="px-4 py-3 rounded-l">{c.recruiter}</td>
+                      <td className="px-4 py-3">{c.LastName}</td>
+                      <td className="px-4 py-3 rounded-l">{c.FirstName}</td>
                       <td className="px-4 py-3">{c.position}</td>
                       <td className="px-4 py-3">{c.firm}</td>
                       <td className="px-4 py-3">{c.email}</td>
