@@ -51,7 +51,11 @@ export default function Login() {
         if (error) throw error;
         setInfo('📧 Un e-mail de confirmation vient d’être envoyé !');
       } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+          options: { redirectTo: null },
+        });
         if (error) throw error;
         navigate('/dashboard');
       }

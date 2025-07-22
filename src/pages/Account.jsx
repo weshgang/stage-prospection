@@ -4,6 +4,50 @@ import { supabase } from '../lib/supabase';
 import { Save } from 'lucide-react';
 import AccountSecurity from '../components/AccountSecurity';
 
+function SetPasswordForm() {
+  const [password, setPassword] = useState('');
+  const [info, setInfo] = useState('');
+  const { user } = useAuth();
+
+  const handleSetPassword = async () => {
+    const { error } = await supabase.auth.updateUser({ password });
+
+    if (error) {
+      setInfo(`❌ ${error.message}`);
+    } else {
+      setInfo('✅ Mot de passe défini ! Vous pouvez maintenant vous connecter sans Google.');
+      setPassword('');
+    }
+  };
+
+  const isGoogleUser = user?.app_metadata?.provider === 'google';
+
+  if (!isGoogleUser) return null;
+
+  return (
+    <div className="mt-10 border-t pt-6">
+      <h2 className="text-lg font-semibold mb-2">Définir un mot de passe</h2>
+      <p className="text-sm text-gray-600 mb-4">
+        Cela vous permettra de vous connecter avec votre e-mail, sans Google.
+      </p>
+      <input
+        type="password"
+        placeholder="Nouveau mot de passe"
+        className="w-full border px-3 py-2 rounded mb-3"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+      />
+      <button
+        onClick={handleSetPassword}
+        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+      >
+        Définir le mot de passe
+      </button>
+      {info && <p className="text-sm mt-3">{info}</p>}
+    </div>
+  );
+}
+
 export default function Account() {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
@@ -136,6 +180,7 @@ export default function Account() {
       )}
       {/* Section sécurité : modifier mot de passe / supprimer compte */}
       <AccountSecurity />
+      <SetPasswordForm />
     </div>
   );
 }
